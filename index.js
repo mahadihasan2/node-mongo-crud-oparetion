@@ -40,6 +40,32 @@ async function run() {
             const cursor = userCollection.find(query)
             const users = await cursor.toArray()
             res.send(users)
+        });
+
+        // Use the find operation with one data 
+
+        app.get('/user/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await userCollection.findOne(query)
+            res.send(result)
+        })
+
+        // put / Update data User
+        app.put('/user/:id', async (req, res) => {
+            const id = req.params.id
+            const updatedUser = req.body
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    name: updatedUser.name,
+                    email: updatedUser.email
+                }
+            };
+
+            const result = await userCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
         })
 
 
